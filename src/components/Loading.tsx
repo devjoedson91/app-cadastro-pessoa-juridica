@@ -4,7 +4,7 @@ export function Loading() {
 
     return (
         <View style={styles.container}>
-            <ActivityIndicator size={50} color="#00B373" />
+            <ActivityIndicator size={50} color="#fff" />
         </View>
     );
 }
@@ -14,6 +14,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#121214'
+        backgroundColor: '#6f2df3'
     }
 });

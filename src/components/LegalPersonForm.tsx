@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Text, TextInput, StyleSheet, View, TouchableOpacity, Modal, Pressable, ToastAndroid } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity, Modal, Pressable, ToastAndroid } from "react-native";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ControlledInput } from "./ControlledInput";
@@ -15,6 +15,9 @@ import {
 import { ModalPicker } from "./ModalPicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CheckBox } from "./CheckBox";
+import { UploadSimple } from "phosphor-react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 export type FormData = {
     cnpj: string;
@@ -46,7 +49,7 @@ const schema = yup.object({
     category: yup.string().required('Informe o porte da empresa'),
     capital:  yup.string().required('Informe o capital social'),
     situation: yup.string().required('Informe a situação'),
-    registration: yup.string(),
+    registration: yup.string().required('Informe a inscrição estadual'),
     email: yup.string().email('Email inválido').required('Informe o email'),
     phone: yup.string().required('Informe o telefone'),
     cep: yup.string().required('Informe o CEP'),
@@ -107,10 +110,14 @@ const possiblesStates = [
 
 export function LegalPersonForm() {
 
+    const navigation = useNavigation<NativeStackNavigationProp<StackParams>>();
+
     const [modalCompaniesVisible, setModalCompaniesVisible] = useState(false);
     const [modalLegalNatureVisible, setModalLegalNatureVisible] = useState(false);
     const [modalSituationVisible, setModalSituationVisible] = useState(false);
     const [modalStateVisible, setModalStateVisible] = useState(false);
+    const [freeRegistrationChecked, setFreeRegistrationChecked] = useState(true);
+    const [buttonUplodFilesVisible, setButtonUplodFilesVisible] = useState(false);
 
     const { control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormData>({
         resolver: yupResolver(schema)
@@ -153,6 +160,14 @@ export function LegalPersonForm() {
         setValue("capital", normalizeCapitalValue(capitalValue));
     },[capitalValue]);
 
+    useEffect(() => {
+        if (freeRegistrationChecked) {
+            setValue('registration', 'ISENTO');
+        } else {
+            reset({registration: ''});
+        }
+    },[freeRegistrationChecked]);
+
     function handleChangeCompanies(company: string) {
 
         setValue('category', company);
@@ -191,7 +206,7 @@ export function LegalPersonForm() {
 
             ToastAndroid.show('Empresa cadastrada com sucesso!', ToastAndroid.SHORT);
 
-            reset();
+            setButtonUplodFilesVisible(true);
 
         } catch(err) {
             console.log('erro ao cadastrar empresa: ',err);
@@ -211,11 +226,15 @@ export function LegalPersonForm() {
                         error={errors.registration} 
                         style={styles.input}
                         keyboardType="numeric"
+                        editable={!freeRegistrationChecked}
                     />
                 </View>
                 <View style={{flexDirection: 'row', width: '50%', alignItems: 'center'}}>
-                    <Text style={styles.title}>Isento</Text>
-                    <CheckBox checked={true} />
+                    <Text style={styles.title}>Isento?</Text>
+                    <CheckBox 
+                        checked={freeRegistrationChecked} 
+                        onPress={() => setFreeRegistrationChecked(!freeRegistrationChecked)} 
+                    />
                 </View>    
             </View>
             <View style={styles.formGroup}>
@@ -434,6 +453,16 @@ export function LegalPersonForm() {
                     />
                 </View>
             </View>
+            {
+                buttonUplodFilesVisible && (
+                    <View style={styles.formGroup}>
+                        <Pressable style={styles.btnUpload} onPress={() => navigation.navigate('FilesUpload')}>
+                            <UploadSimple size={32} color="#fff" />
+                        </Pressable>
+                        <Text style={styles.textBtnUpload}>Anexar Documentos</Text>
+                    </View>
+                )
+            }  
             <View style={styles.formGroup}>
                 <TouchableOpacity 
                     style={styles.btnForm} 
@@ -520,5 +549,17 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 18,
         fontFamily: 'Montserrat_600SemiBold'
+    },
+    btnUpload: {
+        width: 40,
+        height: 40,
+        backgroundColor: '#6f2df3',
+        borderRadius: 6,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    textBtnUpload: {
+        fontFamily: 'Montserrat_400Regular',
+        marginTop: 5
     }
 });

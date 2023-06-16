@@ -16,7 +16,7 @@ export function CheckBox({ checked = false, ...rest }: Props) {
             {
                 checked ? (
                     <View style={styles.boxChecked}>
-                        <Check size={25} color="#fff" />
+                        <Check size={20} color="#fff" />
                     </View>
                 ) : (
                     <View style={styles.boxUnChecked} />

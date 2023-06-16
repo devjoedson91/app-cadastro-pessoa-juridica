@@ -21,6 +21,10 @@ export function FormList({ data, handleCloseModal }: FormListProps) {
                     <X size={35} />
                 </Pressable>
                 <View style={styles.formGroup}>
+                    <Text style={styles.title}>Inscrição Estadual</Text>
+                    <Text style={styles.inputText}>{data?.registration}</Text>
+                </View>
+                <View style={styles.formGroup}>
                     <Text style={styles.title}>CNPJ</Text>
                     <Text style={styles.inputText}>{data?.cnpj}</Text>
                 </View>
@@ -54,10 +58,6 @@ export function FormList({ data, handleCloseModal }: FormListProps) {
                             <View style={{position: 'relative'}}>
                                 <Text style={styles.title}>Situação Cadastral</Text>
                                 <Text style={styles.inputText}>{data?.situation}</Text>
-                            </View>
-                            <View>
-                                <Text style={styles.title}>Situação Especial</Text>
-                                <Text style={styles.inputText}>{data?.especialSituation}</Text>
                             </View>
                         </View>
                         <View style={styles.formGroup}>
