@@ -9,96 +9,152 @@ import {
     Text
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import { MagnifyingGlass } from "phosphor-react-native";
-import { useState } from "react";
+import { CaretDown, MagnifyingGlass } from "phosphor-react-native";
+import { useEffect, useState } from "react";
 import { normalizeCnpjNumber } from "../utils/inputMasks";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FormData } from "../components/LegalPersonForm";
 import { FormList } from "../components/FormList";
+import { ListCompanies } from "../components/ListCompanies";
+import { ModalPicker } from "../components/ModalPicker";
 
 export function Search() {
 
-    const [cnpj, setCnpj] = useState('');
+    const [searchInputValue, setSearchInputValue] = useState('');
 
     const [ dataCompany, setDataCompany ] = useState<FormData>();
 
+    const [dataCompanies, setDataCompanies] = useState<FormData[]>([]);
+
     const [modalVisible, setModalVisible] = useState(false);
+    const [ openSearchTypeModal, setOpenSearchTypeModal ] = useState(false);
+    const [searchType, setSearchType] = useState('CNPJ');
 
-    function handleTypingCnpj(value: string) {
+    const possiblesSearchTypes = ['CNPJ', 'Nome Fantasia'];
 
-        setCnpj(normalizeCnpjNumber(value));
+    function typingInputValue(value: string) {
+
+        if (searchType === 'CNPJ') {
+
+            setSearchInputValue(normalizeCnpjNumber(value));
+
+        } else {
+
+            setSearchInputValue(value);
+        }
+
+    }
+
+    useEffect(() => {
+
+        listCompanies();
+
+    }, []);
+
+    async function listCompanies() {
+
+        const response = await AsyncStorage.getItem('@app-test')
+
+        if (response) setDataCompanies(JSON.parse(response));
+
     }
 
     async function handleSearchCompany() {
 
-        if (cnpj === '' || cnpj.length < 18) {
+        if (searchType === 'CNPJ') {
 
-            ToastAndroid.show('Digite um CNPJ válido!', ToastAndroid.SHORT);
-            return;
-        };
+            if (searchInputValue === '') {
 
-        try {
-
-            const response = await AsyncStorage.getItem('@app-test');
-
-            if (response) {
-
-                let list: FormData[] = JSON.parse(response);
-
-                let cnpjExists = list.find(data => data.cnpj === cnpj);
-
+                listCompanies();
+                return;
+    
+            }
+    
+            try {
+    
+                let temporayData = [];
+    
+                let cnpjExists = dataCompanies.find(data => data.cnpj === searchInputValue);
+    
                 if (cnpjExists) {
-
-                    setDataCompany(cnpjExists);
-
-                    setModalVisible(true);
+    
+                    temporayData.push(cnpjExists);
+    
+                    setDataCompanies(temporayData);
                 } else {
-
+    
                     ToastAndroid.show('Não encontramos esse CNPJ na base de dados!', ToastAndroid.SHORT);
                 }
-
-            };
-
-        } catch(err) {
-            console.log('erro ao pesquisar empresa: ', err);
-            ToastAndroid.show('Erro ao pesquisar empresa', ToastAndroid.SHORT);
+    
+            } catch(err) {
+                console.log('erro ao pesquisar empresa: ', err);
+                ToastAndroid.show('Erro ao pesquisar empresa', ToastAndroid.SHORT);
+    
+            }
 
         }
 
     }
 
+    function openModal(item: FormData) {
+
+        setDataCompany(item);
+        setModalVisible(true);
+
+    }
+
+    function handleSearchType(value: string) {
+        setSearchType(value);
+    }
+
     return (
         <SafeAreaView style={styles.container}>
              <Animatable.View animation="fadeInDown" style={styles.containerHeader}>
-                <TextInput 
-                    style={styles.searchInput}
-                    keyboardType="numeric"
-                    placeholder="CNPJ"
-                    placeholderTextColor="#a1a1a1"
-                    value={cnpj}
-                    onChangeText={(value) => handleTypingCnpj(value)}
-                    maxLength={18}
-                />
+                <View style={styles.headerForm}>
+                    <View style={styles.containerSearchBy}>
+                        <Text style={styles.titleHeaderForm}>Pesquisar por: </Text>
+                        <Pressable 
+                            style={styles.btnSearchBy}
+                            onPress={() => setOpenSearchTypeModal(true)}
+                        >
+                            <Text style={styles.textBtnSearch}>{searchType}</Text>
+                            <CaretDown size={20} color="#fff" />
+                        </Pressable>
+                    </View>
+                    <TextInput 
+                        style={styles.searchInput}
+                        keyboardType={searchType === 'CNPJ' ? 'numeric' : 'default'}
+                        placeholder={searchType}
+                        placeholderTextColor="#a1a1a1"
+                        value={searchInputValue}
+                        onChangeText={(value) => typingInputValue(value)}
+                        maxLength={18}
+                    />
+                </View>
                 <Pressable onPress={handleSearchCompany}>
                     <MagnifyingGlass size={32} color="#fff" />
                 </Pressable>
             </Animatable.View>
             <Animatable.View delay={600} animation="fadeInUp" style={styles.containerForm}>
-                <Text style={styles.textContainer}>Informe seu CNPJ para emitir a Situação Cadastral de Pessoa Jurídica</Text>
-                <View style={styles.containerLogo}>
-                    <Animatable.Image 
-                        animation="flipInY"
-                        source={require('../assets/planner.png')} 
-                        style={{width: '70%'}} 
-                        resizeMode="contain"
-                    />
-                </View>
+                <ListCompanies 
+                    list={dataCompanies} 
+                    handleOpenModal={openModal}
+                    refreshData={listCompanies}             
+                />
             </Animatable.View>
 
             <Modal transparent={true} visible={modalVisible} animationType="slide">
                 <FormList 
                     handleCloseModal={() => setModalVisible(false)}
                     data={dataCompany}
+                />
+            </Modal>
+
+            <Modal transparent={true} visible={openSearchTypeModal} animationType="fade">
+                <ModalPicker 
+                    handleCloseModal={() => setOpenSearchTypeModal(false)}
+                    options={possiblesSearchTypes}
+                    selectedItem={handleSearchType}
                 />
             </Modal>
         </SafeAreaView>
@@ -116,16 +172,16 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
         position: 'relative',
-        paddingHorizontal: '10%',
+        paddingHorizontal: '8%',
+        paddingTop: '8%'
     },
     containerHeader: {
         backgroundColor: '#6f2df3',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         alignItems: 'center',
         flexDirection: 'row',
         paddingHorizontal: '10%',
-        marginTop: '10%',
-        marginBottom: '8%'
+        paddingVertical: 12
     }, 
     containerLogo: {
         flex: 2,
@@ -143,6 +199,31 @@ const styles = StyleSheet.create({
         fontFamily: 'Montserrat_500Medium',
         color: '#fff'
     },
+    containerSearchBy: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12
+    },
+    btnSearchBy: {
+        height: 35,
+        borderWidth: 1,
+        borderColor: '#5e27cc',
+        borderRadius: 6,
+        paddingHorizontal: 10,
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    titleHeaderForm: {
+        fontSize: 16,
+        fontFamily: 'Montserrat_500Medium',
+        color: '#fff',
+        marginRight: 8
+    },
+    textBtnSearch: {
+        fontFamily: 'Montserrat_500Medium',
+        marginRight: 8,
+        color: '#fff'
+    },
     textContainer: {
         color: '#202024',
         fontFamily: 'Montserrat_600SemiBold',
@@ -150,4 +231,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 40
     },
+    headerForm: {
+        width: '100%'
+    }
 });
