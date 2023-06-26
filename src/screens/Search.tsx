@@ -17,8 +17,12 @@ import { FormData } from "../components/LegalPersonForm";
 import { FormList } from "../components/FormList";
 import { ListCompanies } from "../components/ListCompanies";
 import { ModalPicker } from "../components/ModalPicker";
+import { useNavigation } from "@react-navigation/native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
 export function Search() {
+
+    const navigation = useNavigation<BottomTabNavigationProp<TabParams>>();
 
     const [searchInputValue, setSearchInputValue] = useState('');
 
@@ -47,9 +51,9 @@ export function Search() {
 
     useEffect(() => {
 
-        listCompanies();
+        navigation.addListener('focus', () => listCompanies());
 
-    }, []);
+    }, [navigation]);
 
     async function listCompanies() {
 
@@ -61,36 +65,44 @@ export function Search() {
 
     async function handleSearchCompany() {
 
-        if (searchType === 'CNPJ') {
+        if (searchInputValue === '') {
 
-            if (searchInputValue === '') {
+            listCompanies();
+            return;
 
-                listCompanies();
-                return;
-    
+        }
+
+        try {
+
+            let temporayData = [];
+
+            let cnpjExists = undefined;
+
+            switch (searchType) {
+                case 'CNPJ':
+                    cnpjExists = dataCompanies.find(data => data.cnpj === searchInputValue);
+                    break;
+                case 'Nome Fantasia':
+                    cnpjExists = dataCompanies.find(data => data.fantasyName === searchInputValue);
+                    break;
+                default:
+                    ToastAndroid.show('Tipo de pesquisa inválido!', ToastAndroid.SHORT);
             }
-    
-            try {
-    
-                let temporayData = [];
-    
-                let cnpjExists = dataCompanies.find(data => data.cnpj === searchInputValue);
-    
-                if (cnpjExists) {
-    
-                    temporayData.push(cnpjExists);
-    
-                    setDataCompanies(temporayData);
-                } else {
-    
-                    ToastAndroid.show('Não encontramos esse CNPJ na base de dados!', ToastAndroid.SHORT);
-                }
-    
-            } catch(err) {
-                console.log('erro ao pesquisar empresa: ', err);
-                ToastAndroid.show('Erro ao pesquisar empresa', ToastAndroid.SHORT);
-    
+
+
+            if (cnpjExists) {
+
+                temporayData.push(cnpjExists);
+
+                setDataCompanies(temporayData);
+            } else {
+
+                ToastAndroid.show('Não encontramos esse CNPJ na base de dados!', ToastAndroid.SHORT);
             }
+
+        } catch(err) {
+            console.log('erro ao pesquisar empresa: ', err);
+            ToastAndroid.show('Erro ao pesquisar empresa', ToastAndroid.SHORT);
 
         }
 
@@ -128,7 +140,7 @@ export function Search() {
                         placeholderTextColor="#a1a1a1"
                         value={searchInputValue}
                         onChangeText={(value) => typingInputValue(value)}
-                        maxLength={18}
+                        maxLength={searchType === 'CNPJ' ? 18 : 100}
                     />
                 </View>
                 <Pressable onPress={handleSearchCompany}>
@@ -136,11 +148,21 @@ export function Search() {
                 </Pressable>
             </Animatable.View>
             <Animatable.View delay={600} animation="fadeInUp" style={styles.containerForm}>
-                <ListCompanies 
-                    list={dataCompanies} 
-                    handleOpenModal={openModal}
-                    refreshData={listCompanies}             
-                />
+                {
+                    dataCompanies.length === 0 ? (
+                        <Text style={{
+                            fontFamily: 'Montserrat_500Medium',
+                            fontSize: 16,
+                            textAlign: 'center'
+                        }}>Não há empresas cadastradas na base de dados</Text>
+                    ) : (
+                        <ListCompanies 
+                            list={dataCompanies} 
+                            handleOpenModal={openModal}
+                            refreshData={listCompanies}             
+                        />
+                    )
+                }
             </Animatable.View>
 
             <Modal transparent={true} visible={modalVisible} animationType="slide">

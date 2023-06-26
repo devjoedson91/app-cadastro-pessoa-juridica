@@ -19,6 +19,25 @@ import { UploadSimple } from "phosphor-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+const possiblesCompanies = [
+    'MEI', 'ME', 'EPP', 'EMP', 'GE'
+];
+
+const possibleslegalNature = [
+    'Empresa Individual', 
+    'Microempreendedor Individual (MEI)', 
+    'Sociedade Empresária Limitada (Ltda)', 
+    'Sociedade Limitada Unipessoal', 
+    'Sociedade Simples (SS)',
+    'Sociedade Anônima (S/A)',
+    'Empresa de pequeno porte (EPP)',
+    'Empresas de médio e grande porte'
+];
+
+const possiblesSituation = ['Ativo', 'Inativo'];
+
+const possiblesStates = ['RO','AC','AM','RR','PA','AP','TO','MA','PI','CE','RN','PB','PE','AL','SE','BA','MG', 'ES','RJ','SP','PR','SC','RS','MS','MT','GO','DF'];
+
 export type FormData = {
     cnpj: string;
     businessName: string;
@@ -60,53 +79,6 @@ const schema = yup.object({
     city: yup.string().required('Informe a cidade'),
     state: yup.string().required('Informe o estado UF'),
 });
-
-const possiblesCompanies = [
-    'MEI', 'ME', 'EPP', 'EMP', 'GE'
-];
-
-const possibleslegalNature = [
-    'Empresa Individual', 
-    'Microempreendedor Individual (MEI)', 
-    'Sociedade Empresária Limitada (Ltda)', 
-    'Sociedade Limitada Unipessoal', 
-    'Sociedade Simples (SS)',
-    'Sociedade Anônima (S/A)',
-    'Empresa de pequeno porte (EPP)',
-    'Empresas de médio e grande porte'
-];
-
-const possiblesSituation = ['Ativo', 'Inativo'];
-
-const possiblesStates = [
-    'RO',
-    'AC',
-    'AM',
-    'RR',
-    'PA',
-    'AP',
-    'TO',
-    'MA',
-    'PI',
-    'CE',
-    'RN',
-    'PB',
-    'PE',
-    'AL',
-    'SE',
-    'BA',
-    'MG',
-    'ES',
-    'RJ',
-    'SP',
-    'PR',
-    'SC',
-    'RS',
-    'MS',
-    'MT',
-    'GO',
-    'DF'
-];
 
 export function LegalPersonForm() {
 
@@ -161,10 +133,10 @@ export function LegalPersonForm() {
     },[capitalValue]);
 
     useEffect(() => {
-        if (freeRegistrationChecked) {
-            setValue('registration', 'ISENTO');
+        if (freeRegistrationChecked) { 
+            setValue('registration', 'ISENTO'); 
         } else {
-            reset({registration: ''});
+            setValue('registration', '');
         }
     },[freeRegistrationChecked]);
 
@@ -206,7 +178,9 @@ export function LegalPersonForm() {
 
             ToastAndroid.show('Empresa cadastrada com sucesso!', ToastAndroid.SHORT);
 
-            setButtonUplodFilesVisible(true);
+            reset();
+
+            setValue('registration', 'ISENTO');
 
         } catch(err) {
             console.log('erro ao cadastrar empresa: ',err);
@@ -227,6 +201,7 @@ export function LegalPersonForm() {
                         style={styles.input}
                         keyboardType="numeric"
                         editable={!freeRegistrationChecked}
+                        maxLength={9}
                     />
                 </View>
                 <View style={{flexDirection: 'row', width: '50%', alignItems: 'center'}}>
@@ -453,16 +428,6 @@ export function LegalPersonForm() {
                     />
                 </View>
             </View>
-            {
-                buttonUplodFilesVisible && (
-                    <View style={styles.formGroup}>
-                        <Pressable style={styles.btnUpload} onPress={() => navigation.navigate('FilesUpload')}>
-                            <UploadSimple size={32} color="#fff" />
-                        </Pressable>
-                        <Text style={styles.textBtnUpload}>Anexar Documentos</Text>
-                    </View>
-                )
-            }  
             <View style={styles.formGroup}>
                 <TouchableOpacity 
                     style={styles.btnForm} 
@@ -549,17 +514,5 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 18,
         fontFamily: 'Montserrat_600SemiBold'
-    },
-    btnUpload: {
-        width: 40,
-        height: 40,
-        backgroundColor: '#6f2df3',
-        borderRadius: 6,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    textBtnUpload: {
-        fontFamily: 'Montserrat_400Regular',
-        marginTop: 5
     }
 });

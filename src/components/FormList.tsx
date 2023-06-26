@@ -1,6 +1,8 @@
 import { KeyboardAvoidingView, Platform, StyleSheet, ScrollView, View, Text, Pressable, Dimensions } from "react-native";
 import { FormData } from "./LegalPersonForm";
-import { X } from "phosphor-react-native";
+import { X, Paperclip } from "phosphor-react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface FormListProps {
     data: FormData | undefined;
@@ -10,6 +12,8 @@ interface FormListProps {
 const { width: WIDTH, height: HEIGHT } = Dimensions.get('window');
 
 export function FormList({ data, handleCloseModal }: FormListProps) {
+
+    const navigation = useNavigation<NativeStackNavigationProp<StackParams>>();
 
     return (
         <KeyboardAvoidingView 
@@ -93,14 +97,26 @@ export function FormList({ data, handleCloseModal }: FormListProps) {
                             <Text style={styles.inputText}>{data?.agent}</Text>
                         </View>
                         <View style={styles.formGroupRow}>
-                            <View style={{width: '50%'}}>
+                            <View>
                                 <Text style={styles.title}>Cargo</Text>
                                 <Text style={styles.inputText}>{data?.position}</Text>
                             </View>
-                            <View style={{width: '40%'}}>
+                            <View>
                                 <Text style={styles.title}>CPF</Text>
                                 <Text style={styles.inputText}>{data?.cpf}</Text>
                             </View>
+                        </View>
+                        <View style={styles.formGroup}>
+                            <Pressable 
+                                style={styles.btnUpload}
+                                onPress={() => {
+                                    handleCloseModal();
+                                    navigation.navigate('FilesUpload');
+                                }}
+                            >
+                                <Text style={styles.textBtnUpload}>Anexar documentos</Text>
+                                <Paperclip size={25} color="#fff" />
+                            </Pressable>
                         </View>
                     </ScrollView>  
             </KeyboardAvoidingView>
@@ -153,5 +169,19 @@ const styles = StyleSheet.create({
         right: 0,
         top: 20,
         zIndex: 1
+    },
+    btnUpload: {
+        minWidth: '30%',
+        height: 40,
+        backgroundColor: '#00B37E',
+        borderRadius: 6,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row'
+    },
+    textBtnUpload: {
+        fontFamily: 'Montserrat_500Medium',
+        color: '#fff',
+        marginRight: 6
     }
 });
