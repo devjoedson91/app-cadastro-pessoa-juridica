@@ -25,6 +25,10 @@ e anexar ao cadastro, e por fim, usei o react animatable para deixar as telas ma
 - Expo Document Picker
 - Expo Image Picker
 
+## Layout
+
+<video src="https://github.com/devjoedson91/app-cadastro-pessoa-juridica/tree/main/src/assets/apresentacao.mp4"></video>
+
 ## Como usar
 
 - Clone o repositório
