@@ -1,4 +1,4 @@
-# Aplicativo Mobile para cadastro de CNPJ's
+# Aplicativo mobile para cadastro de CNPJ's
 [![NPM](https://img.shields.io/npm/l/react)](https://github.com/devsuperior/sds1-wmazoni/blob/master/LICENSE) 
 
 ## Sobre
