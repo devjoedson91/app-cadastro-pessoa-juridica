@@ -26,9 +26,10 @@ e anexar ao cadastro, e por fim, usei o react animatable para deixar as telas ma
 - Expo Image Picker
 
 ## Layout
+
 ### App Demo
 <a href="https://youtu.be/1277i6x6Ah8" target="_blank">
-  <img src="https://github.com/devjoedson91/app-cadastro-pessoa-juridica/blob/main/src/assets/cover.jpg" width="250" heght="250" />
+  <img src="https://github.com/devjoedson91/app-cadastro-pessoa-juridica/blob/main/src/assets/cover.jpg" width="220" heght="220" />
 </a>
 
 ## Como usar
