@@ -27,9 +27,10 @@ e anexar ao cadastro, e por fim, usei o react animatable para deixar as telas ma
 
 ## Layout
 
-<div>
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/1277i6x6Ah8" title="YouTube video player" frameborder="0"     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>  
-</div>
+<video width="640" height="360" controls>
+  <source src="https://www.youtube.com/watch?v=1277i6x6Ah8&ab_channel=JoedsonFerreira" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## Como usar
 
