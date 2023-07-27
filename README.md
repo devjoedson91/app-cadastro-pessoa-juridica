@@ -27,7 +27,7 @@ e anexar ao cadastro, e por fim, usei o react animatable para deixar as telas ma
 
 ## Layout
 
-[![Watch the video](https://i.stack.imgur.com/Vp2cE.png)](https://youtu.be/vt5fpE0bzSY)
+[![Watch the video]](https://www.youtube.com/watch?v=1277i6x6Ah8&ab_channel=JoedsonFerreira)
 
 ## Como usar
 
