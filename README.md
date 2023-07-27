@@ -27,9 +27,7 @@ e anexar ao cadastro, e por fim, usei o react animatable para deixar as telas ma
 
 ## Layout
 
-<div>
-    <video src="https://github.com/devjoedson91/app-cadastro-pessoa-juridica/tree/main/src/assets/apresentacao.mp4" width="200" height="200" controls></video>  
-</div>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/1277i6x6Ah8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Como usar
 
