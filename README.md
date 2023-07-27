@@ -27,7 +27,7 @@ e anexar ao cadastro, e por fim, usei o react animatable para deixar as telas ma
 
 ## Layout
 
-[![Watch the video]](https://www.youtube.com/watch?v=1277i6x6Ah8&ab_channel=JoedsonFerreira)
+[![Demo CountPages alpha](https://share.gifyoutube.com/KzB6Gb.gif)](https://www.youtube.com/watch?v=ek1j272iAmc)
 
 ## Como usar
 
