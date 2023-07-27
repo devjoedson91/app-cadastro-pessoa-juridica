@@ -27,7 +27,9 @@ e anexar ao cadastro, e por fim, usei o react animatable para deixar as telas ma
 
 ## Layout
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/1277i6x6Ah8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<div>
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/1277i6x6Ah8" title="YouTube video player" frameborder="0"     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>  
+</div>
 
 ## Como usar
 
